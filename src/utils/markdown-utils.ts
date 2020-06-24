@@ -37,7 +37,17 @@ export function findTopLevelHeading(md: string): string | null {
   return null;
 }
 
-export function findWikilinksInMarkdown(md: string): string[] {
+export function cleanupMarkdown(markdown: string) {
+  const replacer = (foundStr: string) => foundStr.replace(/[^\r\n]/g, '');
+  return markdown
+    .replace(REGEX_FENCED_CODE_BLOCK, replacer) //// Remove fenced code blocks (and #603, #675)
+    .replace(/<!-- omit in (toc|TOC) -->/g, '&lt; omit in toc &gt;') //// Escape magic comment
+    .replace(/<!--[\W\w]+?-->/g, replacer) //// Remove comments
+    .replace(/^---[\W\w]+?(\r?\n)---/, replacer); //// Remove YAML front matter
+}
+
+export function findWikilinksInMarkdown(markdown: string): string[] {
+  const md = cleanupMarkdown(markdown);
   const regex = rxWikiLink();
   const unique = new Set<string>();
 
