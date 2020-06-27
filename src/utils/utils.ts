@@ -10,7 +10,7 @@
 import { findTopLevelHeading, findWikilinksInMarkdown } from './markdown-utils';
 
 // @ts-expect-error
-export function readWorkspaceFile(workspace: string, filename: string): string {
+export function readWorkspaceFile(filename: string): string {
   throw new Error('Not implemented');
 }
 

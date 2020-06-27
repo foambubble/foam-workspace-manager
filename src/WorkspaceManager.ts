@@ -1,4 +1,5 @@
 // for readability
+import { basename } from 'path';
 import {
   readWorkspaceFile,
   parseNoteTitleFromMarkdown,
@@ -16,6 +17,7 @@ interface Note {
   title: string;
   filename: string;
   extension: string;
+  absolutePath: string;
   markdown: string; // do we need this?
 }
 
@@ -95,21 +97,25 @@ export class WorkspaceManager {
    *
    * @param filename File name relative to workspace path
    */
-  public async addNoteByFilename(filename: string): Promise<Note> {
+  public async addNoteByFilePath(filePath: string): Promise<Note> {
     return await this.addNoteFromMarkdown(
       this.path,
-      await readWorkspaceFile(this.path, filename)
+      await readWorkspaceFile(filePath)
     );
   }
 
-  public addNoteFromMarkdown(filename: string, markdown: string): Note {
+  public addNoteFromMarkdown(absolutePath: string, markdown: string): Note {
     // parse markdown
-    const [id, extension] = filename.split('.');
+    const filename = basename(absolutePath);
+    const parts = filename.split('.');
+    const extension = parts.pop()!;
+    const id = parts.join('.');
     const title = parseNoteTitleFromMarkdown(markdown);
     const note: Note = {
       id,
       title: title || id,
       filename,
+      absolutePath,
       extension,
       markdown,
     };
