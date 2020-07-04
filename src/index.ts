@@ -1,1 +1,0 @@
-export { WorkspaceManager } from './WorkspaceManager';
